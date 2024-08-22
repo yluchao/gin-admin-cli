@@ -14,7 +14,7 @@ func getAPIFileName(dir, routerName string) string {
 }
 
 // 插入api文件
-func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment string) error {
+func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment, routerGroup string) error {
 	fullname := getAPIFileName(dir, routerName)
 
 	injectContent := fmt.Sprintf("c%s *ctl.%s,", name, name)
@@ -30,7 +30,6 @@ func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment stri
 	}
 
 	var injectStart, apiStart int
-	apiStack := -1
 	insertFn := func(line string) (data string, flag int, ok bool) {
 		if injectStart == 0 && strings.Contains(line, "container.Invoke") {
 			injectStart = 1
@@ -45,28 +44,21 @@ func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment stri
 			return
 		}
 
-		if apiStart == 0 && strings.Contains(line, "v1 := g.Group") {
+		if apiStart == 0 && strings.Contains(line, routerGroup+" := g.Group") {
 			apiStart = 1
 			return
 		}
 
-		if apiStart == 1 {
-			if v := strings.TrimSpace(line); v == "{" {
-				if apiStack == -1 {
-					apiStack = 0
-				}
-				apiStack++
-			} else if v == "}" {
-				apiStack--
-			}
+		if apiStart == 1 && strings.Contains(line, name) {
+			apiStart = -1
+		}
 
-			if apiStack == 0 {
-				apiStack = -1
-				data = apiContent.String()
-				flag = -1
-				ok = true
-				return
-			}
+		if apiStart == 1 && strings.Contains(line, "} // "+routerGroup+" end") {
+
+			data = apiContent.String()
+			flag = -1
+			ok = true
+			return
 		}
 
 		return "", 0, false

@@ -10,14 +10,15 @@ import (
 
 // Config 配置参数
 type Config struct {
-	Dir        string
-	PkgName    string
-	CtlTpl     string
-	RouterName string
-	Name       string
-	Comment    string
-	File       string
-	Modules    string
+	Dir         string
+	PkgName     string
+	CtlTpl      string
+	RouterName  string
+	Name        string
+	Comment     string
+	File        string
+	Modules     string
+	RouterGroup string // 路由分组
 }
 
 // Exec 执行生成模块命令
@@ -120,7 +121,7 @@ func (a *Command) Exec() error {
 		err = insertCtlInject(ctx, pkgName, dir, routerName, item.StructName, item.Comment)
 		a.handleError(err, "生成ctl inject")
 
-		err = insertAPI(ctx, pkgName, dir, routerName, item.StructName, item.Comment)
+		err = insertAPI(ctx, pkgName, dir, routerName, item.StructName, item.Comment, a.cfg.RouterGroup)
 		a.handleError(err, "生成api")
 	}
 

@@ -90,17 +90,23 @@ func GenerateCommand() cli.Command {
 				Name:  "module, m",
 				Usage: "指定生成模块（以逗号分隔，支持：all,schema,entity,model,bll,router）",
 			},
+			&cli.StringFlag{
+				Name:  "router-group, rg",
+				Usage: "指定路由分组前缀，默认v1",
+				Value: "v1",
+			},
 		},
 		Action: func(c *cli.Context) error {
 			cfg := generate.Config{
-				Dir:        c.String("dir"),
-				PkgName:    c.String("pkg"),
-				CtlTpl:     c.String("ctl"),
-				RouterName: c.String("router"),
-				Name:       c.String("name"),
-				Comment:    c.String("comment"),
-				File:       c.String("file"),
-				Modules:    c.String("module"),
+				Dir:         c.String("dir"),
+				PkgName:     c.String("pkg"),
+				CtlTpl:      c.String("ctl"),
+				RouterName:  c.String("router"),
+				Name:        c.String("name"),
+				Comment:     c.String("comment"),
+				File:        c.String("file"),
+				Modules:     c.String("module"),
+				RouterGroup: c.String("router-group"),
 			}
 
 			if cfg.Dir == "" {
