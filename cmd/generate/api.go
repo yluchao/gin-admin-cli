@@ -21,9 +21,11 @@ func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment, rou
 	pname := util.ToPlural(util.ToLowerUnderlinedNamer(name))
 	pname = strings.Replace(pname, "_", "-", -1)
 	apiContent, err := execParseTpl(apiTpl, map[string]string{
-		"Name":       name,
-		"PluralName": pname,
-		"RouterName": routerName,
+		"Name":        name,
+		"PluralName":  pname,
+		"RouterName":  routerName,
+		"routerGroup": routerGroup,
+		"Comment":     comment,
 	})
 	if err != nil {
 		return err
@@ -75,8 +77,8 @@ func insertAPI(ctx context.Context, pkgName, dir, routerName, name, comment, rou
 }
 
 const apiTpl = `
-// 注册/{{.RouterName}}/v1/{{.PluralName}}
-g{{.Name}} := v1.Group("{{.PluralName}}")
+// 注册{{.Comment}} /{{.RouterName}}/{{.routerGroup}}/{{.PluralName}}
+g{{.Name}} := {{.routerGroup}}.Group("{{.PluralName}}")
 {
 	g{{.Name}}.GET("", c{{.Name}}.Query)
 	g{{.Name}}.GET(":id", c{{.Name}}.Get)

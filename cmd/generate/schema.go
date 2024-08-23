@@ -42,9 +42,9 @@ func genSchema(ctx context.Context, dir, name, comment string, tplType CTLTplTyp
 	buf.WriteString(delimiter)
 
 	for _, field := range fields {
-		buf.WriteString(fmt.Sprintf("%s \t %s \t", field.Name, field.Type))
+		buf.WriteString(fmt.Sprintf("%s \t %s \t", util.ToPascalCase(field.Name), field.Type))
 		buf.WriteByte('`')
-		buf.WriteString(fmt.Sprintf(`json:"%s"`, util.ToLowerUnderlinedNamer(field.Name)))
+		buf.WriteString(fmt.Sprintf(`json:"%s"`, field.Name))
 
 		bindingOpts := ""
 		if field.IsRequired {
