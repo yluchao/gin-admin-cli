@@ -63,7 +63,8 @@ func genEntity(ctx context.Context, pkgName, dir, name, comment string, fields .
 	buf.WriteString(delimiter)
 
 	for _, field := range fields {
-		buf.WriteString(fmt.Sprintf("%s: &a.%s,", field.Name, field.Name))
+		upperName := util.ToPascalCase(field.Name)
+		buf.WriteString(fmt.Sprintf("%s: &a.%s,", upperName, upperName))
 		buf.WriteString(delimiter)
 	}
 
@@ -82,9 +83,10 @@ func genEntity(ctx context.Context, pkgName, dir, name, comment string, fields .
 	buf.WriteString("Model")
 	buf.WriteString(delimiter)
 	for _, field := range fields {
-		buf.WriteString(fmt.Sprintf("%s *%s", field.Name, field.Type))
+		upperName := util.ToPascalCase(field.Name)
+		buf.WriteString(fmt.Sprintf("%s *%s", upperName, field.Type))
 		buf.WriteByte('`')
-		buf.WriteString(fmt.Sprintf(`gorm:"column:%s;%s"`, util.ToLowerUnderlinedNamer(field.Name), field.GormOptions))
+		buf.WriteString(fmt.Sprintf(`gorm:"column:%s;%s"`, util.ToLowerUnderlinedNamer(upperName), field.GormOptions))
 		buf.WriteByte('`')
 		buf.WriteString(fmt.Sprintf(" // %s", field.Comment))
 		buf.WriteString(delimiter)
@@ -119,7 +121,8 @@ func genEntity(ctx context.Context, pkgName, dir, name, comment string, fields .
 	buf.WriteString(delimiter)
 
 	for _, field := range fields {
-		buf.WriteString(fmt.Sprintf("%s:  *a.%s,", field.Name, field.Name))
+		upperName := util.ToPascalCase(field.Name)
+		buf.WriteString(fmt.Sprintf("%s:  *a.%s,", upperName, upperName))
 		buf.WriteString(delimiter)
 	}
 	buf.WriteString(fmt.Sprintf("CreatedAt:  a.CreatedAt,"))
